@@ -11,12 +11,28 @@
 <body>
 
   <!-- music×-->
-  <audio autoplay loop>
-  <source src="horse.ogg" type="audio/ogg">
-  <source src="Chinmoku no Majo.mp3" type="audio/mpeg">
-  Tu navegador no soporta el elemento de audio. 
-  </audio>
+<audio id="musica" src="Chinmoku no Majo.mp3" loop></audio>
 
+<script>
+  const musica = document.getElementById("musica");
+  musica.volume = 0.5; // volumen de 0 a 1
+
+  function iniciar() {
+    musica.play().then(() => {
+      // Si funcionó, quitamos los "escuchadores"
+      ["click", "touchstart", "keydown"].forEach(e =>
+        document.removeEventListener(e, iniciar)
+      );
+    }).catch(() => {
+      // Sigue bloqueado: esperamos la siguiente interacción
+    });
+  }
+
+  iniciar(); // intento inmediato
+  ["click", "touchstart", "keydown"].forEach(e =>
+    document.addEventListener(e, iniciar)
+  );
+</script>
 
   
 <div class="hero">
