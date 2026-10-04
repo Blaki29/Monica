@@ -11,24 +11,41 @@
 <body>
 
  <!-- music×-->
-<audio id="musica" src="Chinmoku no Majo.mp3" loop></audio>
+<audio id="musica"></audio>
 
 <script>
-  const musica = document.getElementById("musica");
-  musica.volume = 0.5; // volumen de 0 a 1
+  const canciones = [
+    "Chinmoku no Majo.mp3",
+    "Secrets of the Silent Witch - Opening Feel by Hitsujibungaku.mp3",
+    "Hitori, Tsumugu jikan.mp3"
+  ];
 
-  function iniciar() {
-    musica.play().then(() => {
-      // Si funcionó, quitamos los "escuchadores"
-      ["click", "touchstart", "keydown"].forEach(e =>
-        document.removeEventListener(e, iniciar)
-      );
-    }).catch(() => {
-      // Sigue bloqueado: esperamos la siguiente interacción
-    });
+  const musica = document.getElementById("musica");
+  musica.volume = 0.5;
+
+  let ultima = -1;
+
+  function siguiente() {
+    let i;
+    // Al azar, sin repetir la misma canción dos veces seguidas
+    do {
+      i = Math.floor(Math.random() * canciones.length);
+    } while (i === ultima && canciones.length > 1);
+    ultima = i;
+    musica.src = encodeURIComponent(canciones[i]);
+    musica.play().catch(() => {});
   }
 
-  iniciar(); // intento inmediato
+  // Al terminar una canción, pasa a otra al azar
+  musica.addEventListener("ended", siguiente);
+
+  // Arranca con la primera interacción (los navegadores bloquean el autoplay con sonido)
+  function iniciar() {
+    siguiente();
+    ["click", "touchstart", "keydown"].forEach(e =>
+      document.removeEventListener(e, iniciar)
+    );
+  }
   ["click", "touchstart", "keydown"].forEach(e =>
     document.addEventListener(e, iniciar)
   );
